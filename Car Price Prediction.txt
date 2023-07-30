@@ -1,0 +1,164 @@
+CAR PRICE PREDICTION 
+____________________
+
+
+Link : https://thecleverprogrammer.com/2021/08/04/car-price-prediction-with-machine-learning/ 
+
+SEABORN MODULE
+Seaborn is a powerful data visualization library with high-level interface.Useful in visualizing complex datasets and relationship between variables.(import seaborn as sbn)
+
+
+DECISION TREE ALGORITHM
+________________________
+
+-- It is a Supervised Learning technique used for both Classification & Regression problems. 
+
+-- It is a tree-like structure, where the internal nodes are the features of the dataset, while the branches represent the decision rules and the leaf nodes represent the outcome.
+
+--  Decision Trees MIMIC the human thinking ability while making a decision.
+
+-- While implementing DT in order to select the root node and internal nodes we use a technique calles Attribute Selection Measure(ASM).i.e Information Gain(IG).
+
+-- Pruning is the process of removing unwanted branches/nodes from a tree to get an OPTIMAL decision tree.
+
+-- Its main drawback is the OVERFITTING issue, which can be resolved using RANDOM FOREST ALGORITHM.
+
+
+
+DECISION TREE REGRESSOR
+_______________________
+
+-- Special application of DT, where the target to be predicted is CONTINOUS numerical.
+
+-- Decision Tree Regression is well-suited for predicting continuous values, such as predicting house prices, stock prices, or car prices.
+
+
+
+
+
+
+Step-1 : Load the Dataset. Read the '.csv' file. 
+______
+
+Link - https://www.kaggle.com/datasets/ngawangchoeda/car-price-dataset
+
+/*
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+car_price = pd.read_csv('CarPrice.csv')
+*/
+
+
+
+Step-2 : Preprocess the Data.Check for any Null or ______   missing values.
+
+Use dataset.head(),dataset.describe().
+dataset.isnull() --> returns a DataFrame with same structure as dataset with values 'True' in each cell if its corresponding value is missing or NaN and return 'False' if not.
+
+dataset.isnull().sum() --> The returned DataFrame is given to the sum function where it sums up the 'True' values in EACH COLUMN.
+It return a series where each column is the index and its corresponding value is the count of missing values in that column.
+
+dataset.info() --> Gives us the summary of the DataFrame including the datatypes of the columns,number of Non-null values,and memory usage.
+
+
+
+Step-3 : Visualise the Data.
+______
+
+You can visualise the distribution of the car price using a Histogram.
+
+plt.figure(figsize=(x,y))
+x -> Width of the figure.
+y -> Height of the figure.
+
+plt.hist(x, density, color, edgecolor, label)
+x -> Input Data.
+density -> Default False.If True Histogram will show the probability density instead of frequency.
+edgecolor -> Boundary color of histogram.
+
+
+Correlation ==> The Statistical measure which defines the degree to which two variables are related to each other.
+
+dataset.corr() 
+Return a square matrix of the correlation between each column in the dataset.
+By default it uses 'Pearson correlation coefficient'.
+
+To graphically represent the correlation between the variables we use HEATMAP function from seaborn module.
+sbn.heatmap(Data, annot, cmap)
+Data - correlation matrix(square DataFrame)
+annot - To display the correlation values.Boolean.
+cmap - To color map the heatmap.Like 'coolwarm','plasma','viridis'.
+
+/*
+plt.figure(figsize=(8,6))
+plt.hist(car_price['price'], label='Price', color='red', edgecolor='white', density=True)
+plt.xlabel('CarPrice')
+plt.ylabel('Probability Density')
+plt.title('Car Price Distribution')
+plt.legend()
+plt.show()
+
+sbn.heatmap(car_price.corr(), cmap='coolwarm', annot=True)
+plt.show()
+*/
+
+
+
+Step-4 : Split the Data into Training & Testing sets.
+______
+
+First divide the Dataset into feature and target labels.
+Drop the columns rom the dataset and convert them into numpy array.
+
+/*
+from sklearn.model_selection import train_test_split
+
+car_data = np.array(car_price.drop(['car_ID','price'], axis=1))
+car_label = np.array(car_price['price'])
+x_train,x_test,y_train,y_test = train_test_split(car_data, car_label, test_size=0.2, random_state)
+*/
+
+NOTE: Select only the NUMERIC COLUMNS in the DataFrame as when fitting the model it can't compute on string values.
+
+
+
+Step-5 : Train the Model. We use Decision Tree 
+______	 Algorithm.
+
+/*
+from sklearn.tree import DecisionTreeRegressor
+DTR = DecisionTreeRegressor()
+DTR.fit(x_train,y_train)
+*/
+
+
+
+Step-6 : Make Predictions.
+______
+
+/*
+new_data = np.array([[0.000e+00,1.080e+02,1.867e+02,6.830e+01,5.600e+01,3.130e+03,1.340e+02,3.610e+00,3.210e+00,7.000e+00,1.420e+02,5.600e+03,1.800e+01,2.400e+01]])
+predi = DTR.predict(new_data)
+predi
+*/
+
+After making predictions using a regression model, we use evaluation metrics like Mean Absolute Error (MAE), Mean Squared Error (MSE) to assess the performance and accuracy of the model's predictions.
+
+MAE measures the average absolute difference between the predicted values and the actual target values.
+
+MSE measures the average squared difference between the predicted values and the actual target values.
+
+A smaller MAE/MSE value indicates a better-performing model.
+ 
+model.score(x_test, y_test)
+x_test represents the test dataset.It is a 2D array.
+y_test represent the target values.It is a 1D array.
+
+This function is a measure of how well the model predicts the target values based on the input features in the x_test dataset.
+
+/*
+y_predict = DTR.predict(x_test)
+DTR.score(x_test,y_predict)
+*/
